@@ -1,1 +1,7 @@
-requests = 2.31.0
+fastapi
+uvicorn[standard]
+sqlalchemy
+pydantic
+python-jose[cryptography]
+passlib[bcrypt]
+python-multipart

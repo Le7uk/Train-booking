@@ -1,0 +1,41 @@
+<!DOCTYPE html>
+<html lang="uk">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Вхід - Train Booking</title>
+    <link rel="stylesheet" href="css/style.css">
+</head>
+<body>
+    <div class="container">
+        <h1>Log in</h1>
+        <form id="loginForm">
+            <input type="email" id="email" placeholder="Email" required>
+            <input type="password" id="password" placeholder="Password" required>
+            <button type="submit">Enter</button>
+        </form>
+        <p>Still no account? <a href="register.html">Sign in</a></p>
+        <div id="message"></div>
+    </div>
+
+    <script src="js/api.js"></script>
+    <script src="js/auth.js"></script>
+    <script>
+        redirectIfLoggedIn();
+
+        document.getElementById('loginForm').addEventListener('submit', async (e) => {
+            e.preventDefault();
+            const email = document.getElementById('email').value;
+            const password = document.getElementById('password').value;
+            
+            try {
+                await login(email, password);
+                window.location.href = 'dashboard.html';
+            } catch (error) {
+                document.getElementById('message').innerHTML = 
+                    '<p class="error">Uncorrect email or password</p>';
+            }
+        });
+    </script>
+</body>
+</html>
