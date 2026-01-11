@@ -1,8 +1,9 @@
 from fastapi import APIRouter, Depends, HTTPException
+from fastapi.security import OAuth2PasswordRequestForm
 from sqlalchemy.orm import Session
 from ..database import get_db
 from ..models import User
-from ..schemas import UserRegister, UserLogin, UserResponse
+from ..schemas import UserRegister, UserResponse
 from ..utils.security import hash_password, verify_password, create_access_token
 from ..utils.dependencies import get_current_user
 
@@ -10,7 +11,7 @@ router = APIRouter(prefix="/api/auth", tags=["Authentication"])
 
 @router.post("/register", response_model=UserResponse)
 def register(user_data: UserRegister, db: Session = Depends(get_db)):
-
+    """Реєстрація нового користувача"""
     existing_user = db.query(User).filter(User.email == user_data.email).first()
     if existing_user:
         raise HTTPException(status_code=400, detail="Email already registered")
@@ -26,21 +27,28 @@ def register(user_data: UserRegister, db: Session = Depends(get_db)):
     return new_user
 
 @router.post("/login")
-def login(user_data: UserLogin, db: Session = Depends(get_db)):
-
-    user = db.query(User).filter(User.email == user_data.email).first()
-    if not user or not verify_password(user_data.password, user.password_hash):
-        raise HTTPException(status_code=401, detail="Invalid credentials")
+def login(
+    form_data: OAuth2PasswordRequestForm = Depends(),
+    db: Session = Depends(get_db)
+):
+    """Логін користувача"""
+    user = db.query(User).filter(User.email == form_data.username).first()
     
-
-    access_token = create_access_token(data={"sub": user.id})
+    if not user or not verify_password(form_data.password, user.password_hash):
+        raise HTTPException(
+            status_code=401, 
+            detail="Invalid credentials",
+            headers={"WWW-Authenticate": "Bearer"}
+        )
+    
+    access_token = create_access_token(data={"sub": str(user.id)})
     
     return {
         "access_token": access_token,
-        "token_type": "bearer",
-        "user": UserResponse.model_validate(user)
+        "token_type": "bearer"
     }
 
 @router.get("/me", response_model=UserResponse)
 def get_me(current_user: User = Depends(get_current_user)):
+    """Отримати поточного користувача"""
     return current_user

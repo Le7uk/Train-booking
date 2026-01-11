@@ -1,10 +1,11 @@
 from fastapi import FastAPI
 from fastapi.middleware.cors import CORSMiddleware
-from .routers import auth
+from .routers import auth , trains , bookings
+
 
 app = FastAPI(title="Train Booking API")
 
-# CORS (щоб фронтенд міг звертатись до API)
+
 app.add_middleware(
     CORSMiddleware,
     allow_origins=["*"],
@@ -13,8 +14,9 @@ app.add_middleware(
     allow_headers=["*"],
 )
 
-# Підключи роутери
 app.include_router(auth.router)
+app.include_router(trains.router)
+app.include_router(bookings.router)
 
 @app.get("/")
 def root():
