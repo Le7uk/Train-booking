@@ -7,6 +7,32 @@ from ..utils.dependencies import get_current_user
 
 router = APIRouter(prefix="/api/bookings", tags=["Bookings"])
 
+@router.get("/my", response_model=list[BookingResponse])
+def get_my_bookings(
+    current_user: User = Depends(get_current_user),
+    db: Session = Depends(get_db)
+):
+    """Отримати мої бронювання"""
+    bookings = db.query(Booking).filter(
+        Booking.user_id == current_user.id
+    ).all()
+    return bookings
+
+@router.get("/occupied/{route_id}")
+def get_occupied_seats(route_id: int, db: Session = Depends(get_db)):
+
+    bookings = db.query(Booking).filter(
+        Booking.route_id == route_id,
+        Booking.status == "active"
+    ).all()
+    
+    occupied = [
+        {"carriage": b.carriage, "seat": b.seat_number} 
+        for b in bookings
+    ]
+    
+    return {"occupied_seats": occupied}
+
 @router.post("", response_model=BookingResponse)
 def create_booking(
     booking_data: BookingCreate,
@@ -20,18 +46,27 @@ def create_booking(
     if route.available_seats <= 0:
         raise HTTPException(status_code=400, detail="No available seats")
     
+    # Перевірка валідності вагону і місця
+    if booking_data.carriage < 1 or booking_data.carriage > 10:
+        raise HTTPException(status_code=400, detail="Carriage must be between 1-10")
+    
+    if booking_data.seat_number < 1 or booking_data.seat_number > 20:
+        raise HTTPException(status_code=400, detail="Seat must be between 1-20")
+    
     existing_booking = db.query(Booking).filter(
         Booking.route_id == booking_data.route_id,
+        Booking.carriage == booking_data.carriage,
         Booking.seat_number == booking_data.seat_number,
         Booking.status == "active"
     ).first()
     
     if existing_booking:
-        raise HTTPException(status_code=400, detail="Seat already booked")
+        raise HTTPException(status_code=400, detail="This seat is already booked")
     
     new_booking = Booking(
         user_id=current_user.id,
         route_id=booking_data.route_id,
+        carriage=booking_data.carriage,
         seat_number=booking_data.seat_number
     )
     
@@ -43,15 +78,6 @@ def create_booking(
     
     return new_booking
 
-@router.get("/my", response_model=list[BookingResponse])
-def get_my_bookings(
-    current_user: User = Depends(get_current_user),
-    db: Session = Depends(get_db)
-):
-    bookings = db.query(Booking).filter(
-        Booking.user_id == current_user.id
-    ).all()
-    return bookings
 
 @router.delete("/{booking_id}")
 def cancel_booking(
@@ -67,7 +93,6 @@ def cancel_booking(
     if not booking:
         raise HTTPException(status_code=404, detail="Booking not found")
     
-    # Повернути місце
     route = db.query(Route).filter(Route.id == booking.route_id).first()
     route.available_seats += 1
     

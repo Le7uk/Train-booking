@@ -1,5 +1,5 @@
-from database import engine, SessionLocal
-from models import Base, Train, Route, User
+from .database import engine, SessionLocal
+from .models import Base, Train, Route, User
 from datetime import datetime, timedelta
 from passlib.context import CryptContext
 

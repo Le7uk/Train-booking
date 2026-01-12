@@ -28,57 +28,6 @@
 
     <script src="js/api.js"></script>
     <script src="js/auth.js"></script>
-    <script>
-        requireAuth();
-
-        document.getElementById('searchForm').addEventListener('submit', async (e) => {
-            e.preventDefault();
-            
-            const from = document.getElementById('from').value;
-            const to = document.getElementById('to').value;
-            const date = document.getElementById('date').value;
-            
-            try {
-                const routes = await searchRoutes(from, to, date);
-                displayRoutes(routes);
-            } catch (error) {
-                alert('Search error');
-            }
-        });
-
-        function displayRoutes(routes) {
-            const resultsDiv = document.getElementById('results');
-            
-            if (routes.length === 0) {
-                resultsDiv.innerHTML = '<p>No routes found</p>';
-                return;
-            }
-            
-            resultsDiv.innerHTML = routes.map(route => `
-                <div class="route-card">
-                    <h3>Train ${route.train.train_number} - ${route.train.name}</h3>
-                    <p><strong>${route.from_station}</strong> → <strong>${route.to_station}</strong></p>
-                    <p>Departure: ${new Date(route.departure_time).toLocaleString('en-US')}</p>
-                    <p>Arrival: ${new Date(route.arrival_time).toLocaleString('en-US')}</p>
-                    <p>Price: ${route.price} UAH</p>
-                    <p>Available seats: ${route.available_seats}</p>
-                    <button onclick="bookRoute(${route.id})">Book</button>
-                </div>
-            `).join('');
-        }
-
-        async function bookRoute(routeId) {
-            const seatNumber = prompt('Enter seat number (1-200):');
-            if (!seatNumber) return;
-            
-            try {
-                await createBooking(routeId, parseInt(seatNumber));
-                alert('Booking successful!');
-                window.location.href = 'dashboard.html';
-            } catch (error) {
-                alert('Booking error. The seat may already be taken.');
-            }
-        }
-    </script>
+    <script src="js/main.js"></script>
 </body>
 </html>

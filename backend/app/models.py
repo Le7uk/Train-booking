@@ -44,9 +44,10 @@ class Booking(Base):
     id = Column(Integer, primary_key=True, index=True)
     user_id = Column(Integer, ForeignKey("users.id"))
     route_id = Column(Integer, ForeignKey("routes.id"))
-    seat_number = Column(Integer)
+    carriage = Column(Integer)  
+    seat_number = Column(Integer)  
     booking_date = Column(DateTime, default=datetime.utcnow)
-    status = Column(String, default="active") 
+    status = Column(String, default="active")
     
     user = relationship("User", back_populates="bookings")
     route = relationship("Route", back_populates="bookings")

@@ -1,0 +1,207 @@
+<!DOCTYPE html>
+<html lang="uk">
+<head>
+    <meta charset="UTF-8">
+    <title>Book Seat - Train Booking</title>
+    <link rel="stylesheet" href="css/style.css">
+    <link rel="stylesheet" href="css/booking.css">
+</head>
+<body>
+    <nav>
+        <h2>Train Booking</h2>
+        <div>
+            <a href="index.html">Search</a>
+            <a href="dashboard.html">My Bookings</a>
+            <button onclick="logout()">Log out</button>
+        </div>
+    </nav>
+
+    <div class="container">
+        <button onclick="window.history.back()" class="back-btn">← Back</button>
+        
+        <div id="route-info"></div>
+        
+        <h2>Select Your Seat</h2>
+        
+        <div class="carriage-selector">
+            <label>Select Carriage:</label>
+            <div class="carriage-buttons" id="carriageButtons"></div>
+        </div>
+        
+        <div id="seat-map"></div>
+        
+        <div class="selected-info" id="selectedInfo" style="display: none;">
+            <h3>✅ Selected:</h3>
+            <p id="selectedText"></p>
+            <button id="confirmBtn" class="confirm-btn">Confirm Booking</button>
+        </div>
+    </div>
+
+    <script src="js/api.js"></script>
+    <script src="js/auth.js"></script>
+    <script>
+        requireAuth();
+        
+        const urlParams = new URLSearchParams(window.location.search);
+        const routeId = parseInt(urlParams.get('route'));
+        
+        let selectedCarriage = null;
+        let selectedSeat = null;
+        let occupiedSeats = [];
+        let routeData = null;
+        
+        async function loadBookingPage() {
+            try {
+                const routes = JSON.parse(localStorage.getItem('searchResults') || '[]');
+                routeData = routes.find(r => r.id === routeId);
+                
+                if (!routeData) {
+                    alert('Route not found. Please search again.');
+                    window.location.href = 'index.html';
+                    return;
+                }
+                
+                // Показати інфо про маршрут
+                document.getElementById('route-info').innerHTML = `
+                    <div class="route-card">
+                        <h3>Train ${routeData.train.train_number} - ${routeData.train.name}</h3>
+                        <p><strong>${routeData.from_station}</strong> → <strong>${routeData.to_station}</strong></p>
+                        <p>Departure: ${new Date(routeData.departure_time).toLocaleString('uk-UA')}</p>
+                        <p>Price: ${routeData.price} UAH</p>
+                    </div>
+                `;
+                
+                // Завантажити зайняті місця
+                occupiedSeats = await getOccupiedSeats(routeId);
+                console.log('Occupied seats:', occupiedSeats);
+                
+                // Створити кнопки вагонів
+                createCarriageButtons();
+            } catch (error) {
+                console.error('Error loading booking page:', error);
+                alert('Error loading page');
+            }
+        }
+        
+        function createCarriageButtons() {
+            const container = document.getElementById('carriageButtons');
+            container.innerHTML = '';
+            
+            for (let i = 1; i <= 10; i++) {
+                const btn = document.createElement('button');
+                btn.textContent = `Carriage ${i}`;
+                btn.className = 'carriage-btn';
+                btn.onclick = () => selectCarriage(i);
+                container.appendChild(btn);
+            }
+        }
+        
+        function selectCarriage(carriage) {
+            console.log('Selected carriage:', carriage);
+            selectedCarriage = carriage;
+            selectedSeat = null;
+            
+            // Сховати вибране місце
+            document.getElementById('selectedInfo').style.display = 'none';
+            
+            // Підсвітити вибраний вагон
+            document.querySelectorAll('.carriage-btn').forEach((btn, idx) => {
+                btn.classList.toggle('active', idx + 1 === carriage);
+            });
+            
+            // Показати карту місць
+            renderSeatMap();
+        }
+        
+        function renderSeatMap() {
+            const container = document.getElementById('seat-map');
+            container.innerHTML = '<h3>Carriage ' + selectedCarriage + '</h3>';
+            
+            const seatGrid = document.createElement('div');
+            seatGrid.className = 'seat-grid';
+            
+            for (let i = 1; i <= 20; i++) {
+                const isOccupied = occupiedSeats.some(
+                    s => s.carriage === selectedCarriage && s.seat === i
+                );
+                
+                const seat = document.createElement('button');
+                seat.className = 'seat' + (isOccupied ? ' occupied' : '');
+                seat.textContent = i;
+                seat.disabled = isOccupied;
+                
+                if (!isOccupied) {
+                    seat.onclick = () => selectSeat(i);
+                }
+                
+                seatGrid.appendChild(seat);
+            }
+            
+            container.appendChild(seatGrid);
+            
+            // Легенда
+            const legend = document.createElement('div');
+            legend.className = 'legend';
+            legend.innerHTML = `
+                <span><span class="seat available"></span> Available</span>
+                <span><span class="seat occupied"></span> Occupied</span>
+                <span><span class="seat selected"></span> Selected</span>
+            `;
+            container.appendChild(legend);
+        }
+        
+        function selectSeat(seat) {
+            console.log('Selected seat:', seat);
+            selectedSeat = seat;
+            
+            // Підсвітити вибране місце
+            document.querySelectorAll('.seat:not(.occupied)').forEach(btn => {
+                btn.classList.remove('selected');
+            });
+            
+            const seatIndex = seat - 1;
+            const seatButtons = document.querySelectorAll('.seat:not(.occupied)');
+            if (seatButtons[seatIndex]) {
+                seatButtons[seatIndex].classList.add('selected');
+            }
+            
+            // Показати інфо про вибране місце
+            const infoDiv = document.getElementById('selectedInfo');
+            infoDiv.style.display = 'block';
+            document.getElementById('selectedText').textContent = 
+                `Carriage ${selectedCarriage}, Seat ${selectedSeat}`;
+            
+            // Прокрутити до кнопки
+            infoDiv.scrollIntoView({ behavior: 'smooth', block: 'nearest' });
+        }
+        
+        // Обробка підтвердження бронювання
+        document.getElementById('confirmBtn').addEventListener('click', async () => {
+            console.log('Confirm button clicked');
+            
+            if (!selectedCarriage || !selectedSeat) {
+                alert('Please select a seat');
+                return;
+            }
+            
+            const confirmBtn = document.getElementById('confirmBtn');
+            confirmBtn.disabled = true;
+            confirmBtn.textContent = 'Booking...';
+            
+            try {
+                await createBooking(routeId, selectedCarriage, selectedSeat);
+                alert('✅ Booking successful!');
+                window.location.href = 'dashboard.html';
+            } catch (error) {
+                console.error('Booking error:', error);
+                alert('❌ Booking failed: ' + error.message);
+                confirmBtn.disabled = false;
+                confirmBtn.textContent = 'Confirm Booking';
+            }
+        });
+        
+        // Запустити завантаження сторінки
+        loadBookingPage();
+    </script>
+</body>
+</html>

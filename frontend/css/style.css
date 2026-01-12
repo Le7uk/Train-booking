@@ -87,8 +87,7 @@ button:hover {
 }
 
 .booking-card.cancelled {
-    opacity: 0.6;
-    background: #f8f9fa;
+    display: none;
 }
 
 .error {
