@@ -5,19 +5,16 @@ from passlib.context import CryptContext
 
 pwd_context = CryptContext(schemes=["bcrypt"], deprecated="auto")
 
-# Створи таблиці
 Base.metadata.create_all(bind=engine)
 
 db = SessionLocal()
 
-# Додай тестового юзера
 test_user = User(
     email="test@test.com",
     password_hash=pwd_context.hash("password123")
 )
 db.add(test_user)
 
-# Додай поїзди
 trains_data = [
     {"train_number": "001", "name": "Intercity Kyiv-Lviv", "total_seats": 200},
     {"train_number": "002", "name": "Express Kyiv-Odesa", "total_seats": 150},
@@ -30,7 +27,6 @@ for train_data in trains_data:
 
 db.commit()
 
-# Додай маршрути
 routes_data = [
     {
         "train_id": 1,
@@ -68,4 +64,3 @@ for route_data in routes_data:
 db.commit()
 db.close()
 
-print("✅ База даних створена і заповнена тестовими даними!")

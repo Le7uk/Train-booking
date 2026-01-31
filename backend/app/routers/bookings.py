@@ -12,7 +12,6 @@ def get_my_bookings(
     current_user: User = Depends(get_current_user),
     db: Session = Depends(get_db)
 ):
-    """Отримати мої бронювання"""
     bookings = db.query(Booking).filter(
         Booking.user_id == current_user.id
     ).all()
