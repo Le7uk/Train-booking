@@ -1,6 +1,5 @@
-from .user import UserRegister, UserLogin, UserResponse
-from .train import TrainResponse
-from .route import RouteResponse
-from .booking import BookingCreate, BookingResponse
+from .user import UserRegister as UserRegister, UserLogin as UserLogin, UserResponse as UserResponse
+from .train import TrainResponse as TrainResponse
+from .route import RouteResponse as RouteResponse
+from .booking import BookingCreate as BookingCreate, BookingResponse as BookingResponse
 
-__all__ = ["UserRegister", "UserLogin", "UserResponse", "TrainResponse", "RouteResponse", "BookingCreate", "BookingResponse"]
