@@ -38,3 +38,7 @@ def get_current_user(
     
     print(f"User authenticated: {user.email}")
     return user
+def get_admin_user(current_user: User = Depends(get_current_user)) -> User:
+    if current_user.role != "admin":
+        raise HTTPException(status_code=403, detail="Not enough permissions")
+    return current_user

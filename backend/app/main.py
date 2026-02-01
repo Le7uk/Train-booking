@@ -1,6 +1,6 @@
 from fastapi import FastAPI
 from fastapi.middleware.cors import CORSMiddleware
-from .routers import auth , trains , bookings
+from .routers import auth , trains , bookings ,admin
 
 
 app = FastAPI(title="Train Booking API")
@@ -17,6 +17,7 @@ app.add_middleware(
 app.include_router(auth.router)
 app.include_router(trains.router)
 app.include_router(bookings.router)
+app.include_router(admin.router)
 
 @app.get("/")
 def root():
