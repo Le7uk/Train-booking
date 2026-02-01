@@ -12,30 +12,29 @@ def get_current_user(
     token: str = Depends(oauth2_scheme), 
     db: Session = Depends(get_db)
 ) -> User:
-    """Отримує поточного юзера з JWT токена"""
     
-    print(f"🔍 Received token: {token}")  # DEBUG
+    print(f"Received token: {token}")  
     
     try:
         payload = jwt.decode(token, SECRET_KEY, algorithms=[ALGORITHM])
-        print(f"📦 Decoded payload: {payload}")  # DEBUG
+        print(f"Decoded payload: {payload}")  
         
         user_id: int = payload.get("sub")
-        print(f"👤 User ID: {user_id}")  # DEBUG
+        print(f"User ID: {user_id}")  
         
         if user_id is None:
-            print("❌ No user_id in payload")
+            print("No user_id in payload")
             raise HTTPException(status_code=401, detail="Invalid token")
     
     except JWTError as e:
-        print(f"❌ JWT Error: {e}")  # DEBUG
+        print(f"JWT Error: {e}")  
         raise HTTPException(status_code=401, detail="Invalid token")
     
     user = db.query(User).filter(User.id == user_id).first()
     
     if user is None:
-        print(f"❌ User not found in DB")
+        print("User not found in DB")
         raise HTTPException(status_code=401, detail="User not found")
     
-    print(f"✅ User authenticated: {user.email}")
+    print(f"User authenticated: {user.email}")
     return user

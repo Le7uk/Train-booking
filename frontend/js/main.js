@@ -165,4 +165,4 @@ if (window.location.pathname.includes('dashboard.html')) {
     loadBookings();
 }
 
-}); // Кінець DOMContentLoaded
+});

@@ -45,7 +45,6 @@ def create_booking(
     if route.available_seats <= 0:
         raise HTTPException(status_code=400, detail="No available seats")
     
-    # Перевірка валідності вагону і місця
     if booking_data.carriage < 1 or booking_data.carriage > 10:
         raise HTTPException(status_code=400, detail="Carriage must be between 1-10")
     

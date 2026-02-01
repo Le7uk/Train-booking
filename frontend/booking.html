@@ -61,7 +61,6 @@
                     return;
                 }
                 
-                // Показати інфо про маршрут
                 document.getElementById('route-info').innerHTML = `
                     <div class="route-card">
                         <h3>Train ${routeData.train.train_number} - ${routeData.train.name}</h3>
@@ -71,11 +70,10 @@
                     </div>
                 `;
                 
-                // Завантажити зайняті місця
+
                 occupiedSeats = await getOccupiedSeats(routeId);
                 console.log('Occupied seats:', occupiedSeats);
                 
-                // Створити кнопки вагонів
                 createCarriageButtons();
             } catch (error) {
                 console.error('Error loading booking page:', error);
@@ -101,15 +99,14 @@
             selectedCarriage = carriage;
             selectedSeat = null;
             
-            // Сховати вибране місце
             document.getElementById('selectedInfo').style.display = 'none';
             
-            // Підсвітити вибраний вагон
+
             document.querySelectorAll('.carriage-btn').forEach((btn, idx) => {
                 btn.classList.toggle('active', idx + 1 === carriage);
             });
             
-            // Показати карту місць
+
             renderSeatMap();
         }
         
@@ -139,7 +136,7 @@
             
             container.appendChild(seatGrid);
             
-            // Легенда
+
             const legend = document.createElement('div');
             legend.className = 'legend';
             legend.innerHTML = `
@@ -154,7 +151,7 @@
             console.log('Selected seat:', seat);
             selectedSeat = seat;
             
-            // Підсвітити вибране місце
+
             document.querySelectorAll('.seat:not(.occupied)').forEach(btn => {
                 btn.classList.remove('selected');
             });
@@ -165,17 +162,14 @@
                 seatButtons[seatIndex].classList.add('selected');
             }
             
-            // Показати інфо про вибране місце
             const infoDiv = document.getElementById('selectedInfo');
             infoDiv.style.display = 'block';
             document.getElementById('selectedText').textContent = 
                 `Carriage ${selectedCarriage}, Seat ${selectedSeat}`;
             
-            // Прокрутити до кнопки
             infoDiv.scrollIntoView({ behavior: 'smooth', block: 'nearest' });
         }
         
-        // Обробка підтвердження бронювання
         document.getElementById('confirmBtn').addEventListener('click', async () => {
             console.log('Confirm button clicked');
             
@@ -200,7 +194,6 @@
             }
         });
         
-        // Запустити завантаження сторінки
         loadBookingPage();
     </script>
 </body>
