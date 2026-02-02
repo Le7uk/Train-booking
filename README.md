@@ -1,5 +1,5 @@
 
-# 🚆 Train Booking System
+# 🚆 Centralized Railway Booking Web Application
 
 A Python-based web application for managing train tickets, built with FastAPI and SQLite.
 
