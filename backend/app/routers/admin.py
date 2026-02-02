@@ -87,7 +87,5 @@ def get_all_trains(
 ):
     return db.query(Train).all()
 
-@router.post("/test")
-def test_post():
-    return {"message": "POST works!"}
+
 
