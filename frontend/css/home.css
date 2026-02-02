@@ -1,0 +1,157 @@
+/* HERO SECTION */
+.hero {
+    height: auto;
+    min-height: calc(100vh);
+    background: url("../Images/train.jpg") center / cover no-repeat;
+    background-attachment: fixed;
+    position: relative;
+    display: flex;
+    justify-content: flex-start;
+    align-items: flex-start;
+    padding: 2rem 0 4rem 2rem;
+}
+
+.hero-overlay {
+    position: absolute;
+    inset: 0;
+    background: rgba(0, 0, 0, 0.45);
+}
+
+.hero-content {
+    position: relative;
+    text-align: left;
+    color: white;
+    z-index: 10;
+    width: 100%;
+    max-width: 600px;
+    padding-right: 2rem;
+}
+
+.hero-content h1 {
+    font-size: 3rem;
+    margin-bottom: 2rem;
+    color: white;
+}
+
+/* БІЛИЙ БЛОК з формою */
+.search-box {
+    background: white;
+    padding: 2rem;
+    border-radius: 12px;
+    box-shadow: 0 10px 30px rgba(0,0,0,0.2);
+    margin-bottom: 2rem;
+    width: 900px;
+}
+
+/* трохи виправляємо форму, не ламаючи її */
+.search-box form {
+    display: flex;
+    flex-direction: row;
+    gap: 1rem;
+}
+
+.search-box input {
+    flex: 1;
+    padding: 0.85rem 1rem;
+    border: 2px solid #e0e0e0;
+    border-radius: 8px;
+    font-size: 1rem;
+    transition: border-color 0.3s ease;
+}
+
+.search-box input:focus {
+    outline: none;
+    border-color: #e74c3c;
+}
+
+.search-box button {
+    background: #e74c3c;
+    white-space: nowrap;
+    padding: 0.85rem 2rem;
+    border-radius: 8px;
+    font-weight: 600;
+    transition: all 0.3s ease;
+    border: none;
+    cursor: pointer;
+    color: white;
+}
+
+.search-box button:hover {
+    background: #c0392b;
+    transform: translateY(-2px);
+    box-shadow: 0 5px 15px rgba(231, 76, 60, 0.3);
+}
+
+/* Результати - вспливаюче вікно */
+.results-box {
+    margin-top: 1rem;
+    width: 100%;
+}
+
+.route-card {
+    background: white;
+    border: none;
+    padding: 1.2rem;
+    margin-bottom: 1rem;
+    border-radius: 12px;
+    box-shadow: 0 4px 12px rgba(0,0,0,0.1);
+    transition: all 0.3s ease;
+    color: #2c3e50;
+}
+
+.route-card:hover {
+    transform: translateY(-3px);
+    box-shadow: 0 8px 20px rgba(0,0,0,0.15);
+}
+
+.route-card h3 {
+    margin-bottom: 0.8rem;
+    color: #2c3e50;
+    font-size: 1.15rem;
+}
+
+.route-card p {
+    margin: 0.4rem 0;
+    color: #34495e;
+    font-size: 0.9rem;
+    line-height: 1.4;
+}
+
+.route-card p strong {
+    color: #2c3e50;
+    font-weight: 600;
+}
+
+.route-card button {
+    background: #27ae60;
+    color: white;
+    border: none;
+    padding: 0.75rem 1.5rem;
+    border-radius: 8px;
+    cursor: pointer;
+    font-size: 0.9rem;
+    font-weight: 600;
+    margin-top: 0.8rem;
+    transition: all 0.3s ease;
+    width: 100%;
+}
+
+.route-card button:hover {
+    background: #229954;
+    transform: translateY(-2px);
+    box-shadow: 0 5px 15px rgba(39, 174, 96, 0.3);
+}
+
+.route-card button:active {
+    transform: translateY(0);
+}
+
+.results-box p {
+    background: white;
+    padding: 1.5rem;
+    border-radius: 12px;
+    text-align: center;
+    color: #34495e;
+    font-size: 1rem;
+    box-shadow: 0 4px 12px rgba(0,0,0,0.1);
+}

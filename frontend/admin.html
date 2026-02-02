@@ -62,20 +62,31 @@
         }
 
         function showAddRouteForm() {
-            const html = `
-                <h3>Add Route</h3>
-                <form onsubmit="addRoute(event)">
-                    <input type="number" id="train_id" placeholder="Train ID" required>
-                    <input type="text" id="from_station" placeholder="From" required>
-                    <input type="text" id="to_station" placeholder="To" required>
-                    <input type="datetime-local" id="departure_time" required>
-                    <input type="datetime-local" id="arrival_time" required>
-                    <input type="number" step="0.01" id="price" placeholder="Price" required>
-                    <input type="number" id="available_seats" placeholder="Seats" required>
-                    <button type="submit">Add</button>
-                </form>
-            `;
-            document.getElementById('content').innerHTML += html;
+            getAllTrains().then(trains => {
+                let trainOptions = '<option value="">Select Train</option>';
+                trains.forEach(t => {
+                    trainOptions += `<option value="${t.id}">${t.train_number} - ${t.name}</option>`;
+                });
+                
+                const html = `
+                    <h3>Add Route</h3>
+                    <form onsubmit="addRoute(event)">
+                        <select id="train_id" required>
+                            ${trainOptions}
+                        </select>
+                        <input type="text" id="from_station" placeholder="From" required>
+                        <input type="text" id="to_station" placeholder="To" required>
+                        <input type="datetime-local" id="departure_time" required>
+                        <input type="datetime-local" id="arrival_time" required>
+                        <input type="number" step="0.01" id="price" placeholder="Price" required>
+                        <input type="number" id="available_seats" placeholder="Seats" required>
+                        <button type="submit">Add</button>
+                    </form>
+                `;
+                document.getElementById('content').innerHTML += html;
+            }).catch(error => {
+                alert('Error loading trains: ' + error.message);
+            });
         }
 
         function showAddTrainForm() {

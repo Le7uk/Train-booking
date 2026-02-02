@@ -8,7 +8,7 @@
 <body>
     <nav>
         <h2>Train Booking</h2>
-        <div>
+        <div id="nav-links">
             <a href="index.html">Search Routes</a>
             <button onclick="logout()">Log out</button>
         </div>
@@ -22,5 +22,28 @@
     <script src="js/api.js"></script>
     <script src="js/auth.js"></script>
     <script src="js/main.js"></script>
+    <script>
+        // Діагностика для перевірки ролі
+        console.log('Current localStorage role:', localStorage.getItem('role'));
+        console.log('Current localStorage token:', localStorage.getItem('token') ? 'exists' : 'missing');
+        
+        const role = localStorage.getItem('role');
+        console.log('Role check:', role, 'Is admin?', role === 'admin');
+        
+        if (role === 'admin') {
+            console.log('Adding admin panel button');
+            const navLinks = document.getElementById('nav-links');
+            const adminLink = document.createElement('a');
+            adminLink.href = 'admin.html';
+            adminLink.textContent = 'Admin Panel';
+            adminLink.style.marginRight = '1rem';
+            adminLink.style.color = 'white';
+            adminLink.style.textDecoration = 'none';
+            navLinks.insertBefore(adminLink, navLinks.lastElementChild);
+            console.log('Admin panel button added');
+        } else {
+            console.log('User is not admin, role:', role);
+        }
+    </script>
 </body>
 </html>

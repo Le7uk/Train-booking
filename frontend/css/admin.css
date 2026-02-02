@@ -63,10 +63,20 @@ form {
     background: #f9f9f9;
     padding: 1rem;
     border-radius: 4px;
-    margin-top: 1rem;
+    margin-top: 2rem; 
+    margin-bottom: 1rem;
 }
 
 form input {
+    display: block;
+    width: 100%;
+    padding: 0.5rem;
+    margin-bottom: 0.5rem;
+    border: 1px solid #ccc;
+    border-radius: 4px;
+}
+
+form select {
     display: block;
     width: 100%;
     padding: 0.5rem;
@@ -87,3 +97,9 @@ form button {
 form button:hover {
     background: #229954;
 }
+
+ h3 {
+    margin-top: 2.5rem;
+
+}
+

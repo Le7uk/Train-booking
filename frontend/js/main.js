@@ -103,7 +103,7 @@ if (window.location.pathname.includes('index.html') || window.location.pathname 
                 <p><strong>${route.from_station}</strong> → <strong>${route.to_station}</strong></p>
                 <p>Departure: ${new Date(route.departure_time).toLocaleString('uk-UA')}</p>
                 <p>Arrival: ${new Date(route.arrival_time).toLocaleString('uk-UA')}</p>
-                <p>Price: ${route.price} UAH</p>
+                <p>Price: ${route.price} USD</p>
                 <p>Available seats: ${route.available_seats}</p>
                 <button onclick="bookRoute(${route.id})">Book</button>
             </div>

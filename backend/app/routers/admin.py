@@ -14,14 +14,17 @@ def create_route(
     db: Session = Depends(get_db),
     admin: User = Depends(get_admin_user)
 ):
+    print(f"Creating route with data: {data}")
     train = db.query(Train).filter(Train.id == data.train_id).first()
     if not train:
+        print(f"Train with id {data.train_id} not found")
         raise HTTPException(status_code=404, detail="Train not found")
 
     new_route = Route(**data.model_dump())
     db.add(new_route)
     db.commit()
     db.refresh(new_route)
+    print(f"Route created: {new_route}")
     return new_route
 
 @router.delete("/routes/{route_id}")
@@ -83,4 +86,8 @@ def get_all_trains(
     admin: User = Depends(get_admin_user)
 ):
     return db.query(Train).all()
+
+@router.post("/test")
+def test_post():
+    return {"message": "POST works!"}
 

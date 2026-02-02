@@ -2,37 +2,57 @@
 <html lang="en">
 <head>
     <meta charset="UTF-8">
-    <title>Route Search - Train Booking</title>
+    <title>Train Booking</title>
+
     <link rel="stylesheet" href="css/style.css">
+
+    <link rel="stylesheet" href="css/home.css">
 </head>
 <body>
-    <nav>
-        <h2>Train Booking</h2>
-        <div>
-            <a href="dashboard.html">My Bookings</a>
-            <script>
-            if (localStorage.getItem('role') === 'admin') {
-                document.write('<a href="admin.html" class="admin-link">Admin Panel</a>');
-            }
-            </script>
-            <button onclick="logout()">Log out</button>
-        </div>
-    </nav>
 
-    <div class="container">
-        <h1>Route Search</h1>
-        <form id="searchForm">
-            <input type="text" id="from" placeholder="From" required>
-            <input type="text" id="to" placeholder="To" required>
-            <input type="date" id="date">
-            <button type="submit">Search</button>
-        </form>
-
-        <div id="results"></div>
+<nav>
+    <h2>Train Booking</h2>
+    <div id="nav-links">
+        <a href="dashboard.html">My Bookings</a>
+        <button onclick="logout()">Log out</button>
     </div>
+</nav>
 
-    <script src="js/api.js"></script>
-    <script src="js/auth.js"></script>
-    <script src="js/main.js"></script>
+<section class="hero">
+    <div class="hero-overlay"></div>
+
+    <div class="hero-content">
+        <h1>Route Search</h1>
+
+        <div class="search-box">
+            <form id="searchForm">
+                <input type="text" id="from" placeholder="From" required>
+                <input type="text" id="to" placeholder="To" required>
+                <input type="date" id="date" required>
+                <button type="submit">Search</button>
+            </form>
+        </div>
+        
+        <div id="results" class="results-box"></div>
+    </div>
+</section>
+
+<script src="js/api.js"></script>
+<script src="js/auth.js"></script>
+<script src="js/main.js"></script>
+<script>
+    const role = localStorage.getItem('role');
+    if (role === 'admin') {
+        const navLinks = document.getElementById('nav-links');
+        const adminLink = document.createElement('a');
+        adminLink.href = 'admin.html';
+        adminLink.textContent = 'Admin Panel';
+        adminLink.style.marginRight = '1rem';
+        adminLink.style.color = 'white';
+        adminLink.style.textDecoration = 'none';
+        navLinks.insertBefore(adminLink, navLinks.lastElementChild);
+    }
+</script>
+
 </body>
 </html>
