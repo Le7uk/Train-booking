@@ -1,0 +1,147 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Admin Panel</title>
+    <link rel="stylesheet" href="css/style.css">
+    <link rel="stylesheet" href="css/admin.css">
+</head>
+<body>
+    <nav>
+        <h2>Admin Panel</h2>
+        <div>
+            <button onclick="window.location.href='index.html'">Back to Dashboard</button>
+            <button onclick="logout()">Log out</button>
+        </div>
+    </nav>
+
+    <div class="container">
+        <div class="admin-buttons">
+            <button onclick="showRoutes()">Routes</button>
+            <button onclick="showTrains()">Trains</button>
+        </div>
+        <div id="content"></div>
+    </div>
+
+    <script src="js/api.js"></script>
+    <script src="js/auth.js"></script>
+    <script>
+        requireAuth();
+        if (localStorage.getItem('role') !== 'admin') {
+            alert('Access denied');
+            window.location.href = 'index.html';
+        }
+
+        async function showRoutes() {
+            try {
+                const routes = await getAllRoutes();
+                let html = '<h2>Routes</h2><button class="add-btn" onclick="showAddRouteForm()">Add Route</button><table><tr><th>ID</th><th>Train ID</th><th>From</th><th>To</th><th>Departure</th><th>Arrival</th><th>Price</th><th>Seats</th><th>Actions</th></tr>';
+                routes.forEach(r => {
+                    html += `<tr><td>${r.id}</td><td>${r.train_id}</td><td>${r.from_station}</td><td>${r.to_station}</td><td>${new Date(r.departure_time).toLocaleString()}</td><td>${new Date(r.arrival_time).toLocaleString()}</td><td>${r.price}</td><td>${r.available_seats}</td><td><button class="delete-btn" onclick="onDeleteRoute(${r.id})">Delete</button></td></tr>`;
+                });
+                html += '</table>';
+                document.getElementById('content').innerHTML = html;
+            } catch (error) {
+                alert('Error loading routes: ' + error.message);
+            }
+        }
+
+        async function showTrains() {
+            try {
+                const trains = await getAllTrains();
+                let html = '<h2>Trains</h2><button class="add-btn" onclick="showAddTrainForm()">Add Train</button><table><tr><th>ID</th><th>Number</th><th>Name</th><th>Seats</th><th>Actions</th></tr>';
+                trains.forEach(t => {
+                    html += `<tr><td>${t.id}</td><td>${t.train_number}</td><td>${t.name}</td><td>${t.total_seats}</td><td><button class="delete-btn" onclick="onDeleteTrain(${t.id})">Delete</button></td></tr>`;
+                });
+                html += '</table>';
+                document.getElementById('content').innerHTML = html;
+            } catch (error) {
+                alert('Error loading trains: ' + error.message);
+            }
+        }
+
+        function showAddRouteForm() {
+            const html = `
+                <h3>Add Route</h3>
+                <form onsubmit="addRoute(event)">
+                    <input type="number" id="train_id" placeholder="Train ID" required>
+                    <input type="text" id="from_station" placeholder="From" required>
+                    <input type="text" id="to_station" placeholder="To" required>
+                    <input type="datetime-local" id="departure_time" required>
+                    <input type="datetime-local" id="arrival_time" required>
+                    <input type="number" step="0.01" id="price" placeholder="Price" required>
+                    <input type="number" id="available_seats" placeholder="Seats" required>
+                    <button type="submit">Add</button>
+                </form>
+            `;
+            document.getElementById('content').innerHTML += html;
+        }
+
+        function showAddTrainForm() {
+            const html = `
+                <h3>Add Train</h3>
+                <form onsubmit="addTrain(event)">
+                    <input type="text" id="train_number" placeholder="Train Number" required>
+                    <input type="text" id="name" placeholder="Name" required>
+                    <input type="number" id="total_seats" placeholder="Total Seats" required>
+                    <button type="submit">Add</button>
+                </form>
+            `;
+            document.getElementById('content').innerHTML += html;
+        }
+
+        async function addRoute(event) {
+            event.preventDefault();
+            const data = {
+                train_id: +document.getElementById('train_id').value,
+                from_station: document.getElementById('from_station').value,
+                to_station: document.getElementById('to_station').value,
+                departure_time: document.getElementById('departure_time').value + ':00',
+                arrival_time: document.getElementById('arrival_time').value + ':00',
+                price: +document.getElementById('price').value,
+                available_seats: +document.getElementById('available_seats').value
+            };
+            try {
+                await createRoute(data);
+                showRoutes();
+            } catch (error) {
+                alert('Error adding route: ' + error.message);
+            }
+        }
+
+        async function addTrain(event) {
+            event.preventDefault();
+            const data = {
+                train_number: document.getElementById('train_number').value,
+                name: document.getElementById('name').value,
+                total_seats: +document.getElementById('total_seats').value
+            };
+            try {
+                await createTrain(data);
+                showTrains();
+            } catch (error) {
+                alert('Error adding train: ' + error.message);
+            }
+        }
+
+        async function onDeleteRoute(id) {
+            try {
+                await deleteRoute(id);
+                showRoutes();
+            } catch (error) {
+                alert('Error deleting route: ' + error.message);
+            }
+        }
+
+        async function onDeleteTrain(id) {
+            try {
+                await deleteTrain(id);
+                showTrains();
+            } catch (error) {
+                alert('Error deleting train: ' + error.message);
+            }
+        }
+    </script>
+</body>
+</html>

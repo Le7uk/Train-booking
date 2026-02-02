@@ -180,3 +180,78 @@ async function cancelBooking(bookingId) {
         throw error;
     }
 }
+
+async function getMe() {
+    const token = localStorage.getItem('token');
+    const response = await fetch(`${API_URL}/auth/me`, {
+        headers: { 'Authorization': `Bearer ${token}` }
+    });
+    if (!response.ok) throw new Error('Failed to get user');
+    return await response.json();
+}
+
+async function getAllRoutes() {
+    const token = localStorage.getItem('token');
+    const response = await fetch(`${API_URL}/admin/routes`, {
+        headers: { 'Authorization': `Bearer ${token}` }
+    });
+    if (!response.ok) throw new Error('Failed to get routes');
+    return await response.json();
+}
+
+async function deleteRoute(routeId) {
+    const token = localStorage.getItem('token');
+    const response = await fetch(`${API_URL}/admin/routes/${routeId}`, {
+        method: 'DELETE',
+        headers: { 'Authorization': `Bearer ${token}` }
+    });
+    if (!response.ok) throw new Error('Failed to delete route');
+    return await response.json();
+}
+
+async function createRoute(routeData) {
+    const token = localStorage.getItem('token');
+    const response = await fetch(`${API_URL}/admin/routes`, {
+        method: 'POST',
+        headers: {
+            'Content-Type': 'application/json',
+            'Authorization': `Bearer ${token}`
+        },
+        body: JSON.stringify(routeData)
+    });
+    if (!response.ok) throw new Error('Failed to create route');
+    return await response.json();
+}
+
+async function getAllTrains() {
+    const token = localStorage.getItem('token');
+    const response = await fetch(`${API_URL}/admin/trains`, {
+        headers: { 'Authorization': `Bearer ${token}` }
+    });
+    if (!response.ok) throw new Error('Failed to get trains');
+    return await response.json();
+}
+
+async function deleteTrain(trainId) {
+    const token = localStorage.getItem('token');
+    const response = await fetch(`${API_URL}/admin/trains/${trainId}`, {
+        method: 'DELETE',
+        headers: { 'Authorization': `Bearer ${token}` }
+    });
+    if (!response.ok) throw new Error('Failed to delete train');
+    return await response.json();
+}
+
+async function createTrain(trainData) {
+    const token = localStorage.getItem('token');
+    const response = await fetch(`${API_URL}/admin/trains`, {
+        method: 'POST',
+        headers: {
+            'Content-Type': 'application/json',
+            'Authorization': `Bearer ${token}`
+        },
+        body: JSON.stringify(trainData)
+    });
+    if (!response.ok) throw new Error('Failed to create train');
+    return await response.json();
+}

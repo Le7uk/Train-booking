@@ -19,7 +19,9 @@ if (window.location.pathname.includes('login.html')) {
             
             try {
                 await login(email, password);
-                console.log('Login successful');
+                const user = await getMe();
+                localStorage.setItem('role', user.role);
+                console.log('Login successful, role:', user.role);
                 window.location.href = 'index.html';
             } catch (error) {
                 console.error('Login error:', error);

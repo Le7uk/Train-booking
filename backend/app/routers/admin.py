@@ -70,3 +70,17 @@ def delete_train(
     db.commit()
     return {"message": "Train deleted"}
 
+@router.get("/routes", response_model=list[RouteResponse])
+def get_all_routes(
+    db: Session = Depends(get_db),
+    admin: User = Depends(get_admin_user)
+):
+    return db.query(Route).all()
+
+@router.get("/trains", response_model=list[TrainResponse])
+def get_all_trains(
+    db: Session = Depends(get_db),
+    admin: User = Depends(get_admin_user)
+):
+    return db.query(Train).all()
+
