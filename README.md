@@ -64,7 +64,7 @@ uvicorn app.main:app --reload
 ```
 
 ```bash
-python -m http.server 8080 (for example)
+python -m http.server 8080 
 ```
 
 ---
